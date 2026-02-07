@@ -49,19 +49,18 @@ CREATE TABLE IF NOT EXISTS `transactions`
 (
     `transaction_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `amount`         decimal(12, 2)      NOT NULL,
-    `description`    varchar(255) DEFAULT NULL,
+    `description`    varchar(255)                 DEFAULT NULL,
     `category_id`    int(10) unsigned    NOT NULL,
     `datetime`       datetime            NOT NULL,
     `source`         varchar(100)        NOT NULL,
+    `currency`       varchar(5)          NOT NULL DEFAULT 'LKR',
     PRIMARY KEY (`transaction_id`),
     KEY `idx_category_id` (`category_id`),
     KEY `idx_datetime` (`datetime`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 2499
+  AUTO_INCREMENT = 3645
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
-
-
 
 INSERT INTO `categories` (`category_id`, `category`)
 VALUES (1, 'Uncategorized');
