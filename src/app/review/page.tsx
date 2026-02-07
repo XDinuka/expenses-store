@@ -96,7 +96,7 @@ export default function ReviewPage() {
     // Data for Category Comparison across months
     const categoryComparisonData = filteredStats
         .filter(s => s.category === selectedCategory)
-        .sort((a, b) => b.month.localeCompare(a.month));
+        .sort((a, b) => a.month.localeCompare(b.month));
 
     const comparisonChartConfig = {
         ...commonChartConfigs,
@@ -252,7 +252,7 @@ export default function ReviewPage() {
 
                             <Card title="Data Breakdown">
                                 <Table
-                                    dataSource={categoryComparisonData}
+                                    dataSource={categoryComparisonData.reverse()}
                                     columns={[
                                         {title: 'Month', dataIndex: 'month', key: 'month'},
                                         {
@@ -288,7 +288,7 @@ export default function ReviewPage() {
 
                             <Card title="Monthly Summaries">
                                 <Table
-                                    dataSource={monthlyTotals}
+                                    dataSource={monthlyTotals.reverse()}
                                     columns={[
                                         {title: 'Month', dataIndex: 'month', key: 'month'},
                                         {
