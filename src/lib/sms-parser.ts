@@ -5,7 +5,7 @@ export interface ParsedSMS {
     datetime: string;
     source: string;
     description: string;
-    category_id: number; // Will default to a "Uncategorized" or similar if possible
+    category_id: number; // Will default to an "Uncategorized" or similar if possible
 }
 
 // These are placeholder patterns. The user will provide real ones later.
