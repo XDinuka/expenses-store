@@ -1,66 +1,59 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+import {Card, Col, Row, Statistic, Typography} from 'antd';
+import {TagsOutlined, TransactionOutlined, WalletOutlined} from '@ant-design/icons';
+
+const {Title, Paragraph} = Typography;
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    return (
+        <div style={{padding: '20px'}}>
+            <Title level={2}>Welcome to Expense Store</Title>
+            <Paragraph>
+                Manage your personal finances, track transactions, and organize your categories efficiently.
+            </Paragraph>
+
+            <Row gutter={16} style={{marginTop: '32px'}}>
+                <Col span={8}>
+                    <Card variant="borderless">
+                        <Statistic
+                            title="Transactions"
+                            value="Manage"
+                            prefix={<TransactionOutlined/>}
+                            styles={{content: {color: '#3f51b5'}}}
+                        />
+                    </Card>
+                </Col>
+                <Col span={8}>
+                    <Card variant="borderless">
+                        <Statistic
+                            title="Categories"
+                            value="Organize"
+                            prefix={<TagsOutlined/>}
+                            styles={{content: {color: '#cf1322'}}}
+                        />
+                    </Card>
+                </Col>
+                <Col span={8}>
+                    <Card variant="borderless">
+                        <Statistic
+                            title="Reimbursements"
+                            value="Track"
+                            prefix={<WalletOutlined/>}
+                            styles={{content: {color: '#3f8600'}}}
+                        />
+                    </Card>
+                </Col>
+            </Row>
+
+            <Card style={{marginTop: '32px'}}>
+                <Title level={4}>Getting Started</Title>
+                <ul style={{lineHeight: '2'}}>
+                    <li>Go to <b>Categories</b> to define your expense types (e.g., Food, Travel).</li>
+                    <li>Navigate to <b>Transactions</b> to record your daily spending.</li>
+                    <li>Use the <b>Add Reimbursement</b> button on any transaction to track money coming back.</li>
+                </ul>
+            </Card>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    );
 }
