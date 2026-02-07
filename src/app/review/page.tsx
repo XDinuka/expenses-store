@@ -1,9 +1,13 @@
 'use client';
 
 import React, {useEffect, useState} from 'react';
-import {Card, Col, Empty, Row, Select, Space, Spin, Statistic, Table, Tabs, Typography} from 'antd';
+import {Card, Col, DatePicker, Empty, Row, Select, Space, Spin, Statistic, Table, Tabs, Typography} from 'antd';
 import {BarChartOutlined, CalendarOutlined, ShoppingOutlined} from '@ant-design/icons';
 import dynamic from 'next/dynamic';
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+
+dayjs.extend(isBetween);
 
 // Dynamically import charts to avoid SSR issues
 const Column = dynamic(() => import('@ant-design/plots').then((mod) => mod.Column), {ssr: false});
@@ -38,6 +42,10 @@ export default function ReviewPage() {
     const [selectedMonth, setSelectedMonth] = useState<string>('');
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [selectedCurrency, setSelectedCurrency] = useState<string>('LKR');
+    const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+        dayjs().subtract(11, 'month').startOf('month'),
+        dayjs().endOf('month')
+    ]);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -72,6 +80,12 @@ export default function ReviewPage() {
     const months = Array.from(new Set(filteredStats.map(s => s.month))).sort((a, b) => b.localeCompare(a));
     const categories = Array.from(new Set(filteredStats.map(s => s.category))).sort();
 
+    // Comparison Data Filtering
+    const comparisonFilteredStats = filteredStats.filter(s => {
+        const monthDate = dayjs(s.month, 'YYYY-MM');
+        return monthDate.isBetween(dateRange[0], dateRange[1], 'month', '[]');
+    });
+
     // Data for "Monthly Overview"
     const currentMonthData = filteredStats.filter(s => s.month === selectedMonth);
     const totalSpent = currentMonthData.reduce((acc, curr) => acc + Number(curr.total_spent), 0);
@@ -94,7 +108,7 @@ export default function ReviewPage() {
     };
 
     // Data for Category Comparison across months
-    const categoryComparisonData = filteredStats
+    const categoryComparisonData = comparisonFilteredStats
         .filter(s => s.category === selectedCategory)
         .sort((a, b) => a.month.localeCompare(b.month));
 
@@ -110,13 +124,14 @@ export default function ReviewPage() {
     };
 
     // Data for Monthly Total Comparison
-    const monthlyTotals = months.map(m => {
-        const monthItems = filteredStats.filter(s => s.month === m);
+    const comparisonMonths = Array.from(new Set(comparisonFilteredStats.map(s => s.month))).sort((a, b) => a.localeCompare(b));
+    const monthlyTotals = comparisonMonths.map(m => {
+        const monthItems = comparisonFilteredStats.filter(s => s.month === m);
         return {
             month: m,
             total: monthItems.reduce((acc, curr) => acc + Number(curr.net_amount), 0)
         };
-    }).sort((a, b) => a.month.localeCompare(b.month));
+    });
 
     const monthlyTotalConfig = {
         ...commonChartConfigs,
@@ -136,6 +151,10 @@ export default function ReviewPage() {
                     <Select
                         style={{width: 100}}
                         value={selectedCurrency}
+                        showSearch={{
+                            filterOption: (input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
+                        }}
                         onChange={(val) => {
                             setSelectedCurrency(val);
                             // Reset selected month/category if they don't exist in the new currency?
@@ -158,6 +177,10 @@ export default function ReviewPage() {
                                     <Select
                                         style={{width: 200}}
                                         value={selectedMonth}
+                                        showSearch={{
+                                            filterOption: (input, option) =>
+                                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
+                                        }}
                                         onChange={setSelectedMonth}
                                         options={months.map(m => ({label: m, value: m}))}
                                     />
@@ -240,8 +263,19 @@ export default function ReviewPage() {
                                     <Select
                                         style={{width: 200}}
                                         value={selectedCategory}
+                                        showSearch={{
+                                            filterOption: (input, option) =>
+                                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
+                                        }}
                                         onChange={setSelectedCategory}
                                         options={categories.map(c => ({label: c, value: c}))}
+                                    />
+                                    <Text strong>Date Range:</Text>
+                                    <DatePicker.RangePicker
+                                        picker="month"
+                                        value={dateRange}
+                                        onChange={(val) => val && setDateRange(val as [dayjs.Dayjs, dayjs.Dayjs])}
+                                        allowClear={false}
                                     />
                                 </Space>
                             </Card>
@@ -252,7 +286,7 @@ export default function ReviewPage() {
 
                             <Card title="Data Breakdown">
                                 <Table
-                                    dataSource={categoryComparisonData.reverse()}
+                                    dataSource={[...categoryComparisonData].reverse()}
                                     columns={[
                                         {title: 'Month', dataIndex: 'month', key: 'month'},
                                         {
@@ -282,13 +316,24 @@ export default function ReviewPage() {
                     label: <span><BarChartOutlined/>Monthly Comparison</span>,
                     children: (
                         <Space orientation="vertical" size="large" style={{width: '100%'}}>
+                            <Card>
+                                <Space size="middle">
+                                    <Text strong>Date Range:</Text>
+                                    <DatePicker.RangePicker
+                                        picker="month"
+                                        value={dateRange}
+                                        onChange={(val) => val && setDateRange(val as [dayjs.Dayjs, dayjs.Dayjs])}
+                                        allowClear={false}
+                                    />
+                                </Space>
+                            </Card>
                             <Card title="Monthly Spending Trend (All Categories Combined)">
                                 <Column {...monthlyTotalConfig} />
                             </Card>
 
                             <Card title="Monthly Summaries">
                                 <Table
-                                    dataSource={monthlyTotals.reverse()}
+                                    dataSource={[...monthlyTotals].reverse()}
                                     columns={[
                                         {title: 'Month', dataIndex: 'month', key: 'month'},
                                         {

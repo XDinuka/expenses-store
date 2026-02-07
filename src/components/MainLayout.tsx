@@ -6,6 +6,7 @@ import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     TransactionOutlined,
+    PlusOutlined,
     TagsOutlined,
     DashboardOutlined,
     CloudUploadOutlined,
@@ -36,7 +37,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         },
         {
             key: '/new-transactions',
-            icon: <TransactionOutlined />,
+            icon: <PlusOutlined />,
             label: 'New Transactions',
         },
         {

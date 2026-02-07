@@ -1,31 +1,31 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-    Table,
     Button,
-    Modal,
+    Card,
+    Checkbox,
+    Col,
+    DatePicker,
     Form,
     Input,
     InputNumber,
-    DatePicker,
+    message,
+    Modal,
+    Row,
     Select,
     Space,
+    Table,
     Tag,
-    message,
-    Card,
     Tooltip,
-    Checkbox,
-    Typography,
-    Row,
-    Col
+    Typography
 } from 'antd';
-import { PlusOutlined, HistoryOutlined, EditOutlined } from '@ant-design/icons';
+import {EditOutlined, HistoryOutlined, PlusOutlined} from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { useRouter } from 'next/navigation';
-import { Transaction, Category } from '@/types';
+import {useRouter} from 'next/navigation';
+import {Category, Transaction} from '@/types';
 
-const { Text } = Typography;
+const {Text} = Typography;
 
 
 export default function TransactionsPage() {
@@ -69,7 +69,12 @@ export default function TransactionsPage() {
     }, []);
 
 
-    const handleAddReimbursement = async (values: { amount: number; datetime: dayjs.Dayjs; source?: string; description?: string }) => {
+    const handleAddReimbursement = async (values: {
+        amount: number;
+        datetime: dayjs.Dayjs;
+        source?: string;
+        description?: string
+    }) => {
         setSubmitting(true);
         try {
             const payload = {
@@ -80,7 +85,7 @@ export default function TransactionsPage() {
 
             const response = await fetch('/api/reimbursements', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload),
             });
 
@@ -105,7 +110,7 @@ export default function TransactionsPage() {
             // Update transaction
             const txRes = await fetch(`/api/transactions/${selectedTx.transaction_id}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     category_id: values.category_id,
                     bulkUpdate: values.bulkUpdate,
@@ -122,7 +127,7 @@ export default function TransactionsPage() {
                 if (categoryName) {
                     await fetch('/api/descriptions', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
                             description: selectedTx.description,
                             category: categoryName
@@ -154,7 +159,7 @@ export default function TransactionsPage() {
 
             const response = await fetch(`/api/transactions/${selectedTx.transaction_id}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload),
             });
 
@@ -184,7 +189,7 @@ export default function TransactionsPage() {
             dataIndex: 'amount',
             key: 'amount',
             render: (amount: number, record: Transaction) => (
-                <span style={{ fontWeight: 'bold' }}>
+                <span style={{fontWeight: 'bold'}}>
                     {record.currency} {Number(amount).toFixed(2)}
                 </span>
             ),
@@ -195,7 +200,7 @@ export default function TransactionsPage() {
             dataIndex: 'reimbursed_amount',
             key: 'reimbursed_amount',
             render: (amount: number) => (
-                <span style={{ color: '#52c41a' }}>
+                <span style={{color: '#52c41a'}}>
                     {amount > 0 ? `$${Number(amount).toFixed(2)}` : '-'}
                 </span>
             ),
@@ -206,7 +211,7 @@ export default function TransactionsPage() {
             render: (_: unknown, record: Transaction) => {
                 const net = record.amount - (record.reimbursed_amount || 0);
                 return (
-                    <span style={{ fontWeight: 'bold', color: net > 0 ? '#f5222d' : '#8c8c8c' }}>
+                    <span style={{fontWeight: 'bold', color: net > 0 ? '#f5222d' : '#8c8c8c'}}>
                         {record.currency} {net.toFixed(2)}
                     </span>
                 );
@@ -219,7 +224,7 @@ export default function TransactionsPage() {
             render: (category: string, record: Transaction) => (
                 <Tag
                     color={category === 'Uncategorized' ? 'orange' : 'blue'}
-                    style={{ cursor: 'pointer' }}
+                    style={{cursor: 'pointer'}}
                     onClick={() => {
                         setSelectedTx(record);
                         setCatModalVisible(true);
@@ -253,7 +258,7 @@ export default function TransactionsPage() {
                     <Tooltip title="Add Reimbursement">
                         <Button
                             type="dashed"
-                            icon={<HistoryOutlined />}
+                            icon={<HistoryOutlined/>}
                             size="small"
                             onClick={() => {
                                 setSelectedTx(record);
@@ -270,7 +275,7 @@ export default function TransactionsPage() {
                         </Button>
                     </Tooltip>
                     <Button
-                        icon={<EditOutlined />}
+                        icon={<EditOutlined/>}
                         size="small"
                         onClick={() => {
                             setSelectedTx(record);
@@ -293,10 +298,10 @@ export default function TransactionsPage() {
 
     return (
         <Card>
-            <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
                 <Button
                     type="primary"
-                    icon={<PlusOutlined />}
+                    icon={<PlusOutlined/>}
                     onClick={() => router.push('/new-transactions')}
                 >
                     Add Transaction
@@ -308,7 +313,7 @@ export default function TransactionsPage() {
                 dataSource={transactions}
                 rowKey="transaction_id"
                 loading={loading}
-                pagination={{ pageSize: 10 }}
+                pagination={{pageSize: 10}}
             />
 
 
@@ -331,37 +336,38 @@ export default function TransactionsPage() {
                     <Form.Item
                         name="amount"
                         label="Reimbursement Amount"
-                        rules={[{ required: true, message: 'Required' }]}
+                        rules={[{required: true, message: 'Required'}]}
                     >
-                        <InputNumber style={{ width: '100%' }} precision={2} prefix={selectedTx?.currency || 'LKR'} />
+                        <InputNumber style={{width: '100%'}} precision={2} prefix={selectedTx?.currency || 'LKR'}/>
                     </Form.Item>
 
                     <Form.Item
                         name="datetime"
                         label="Date Received"
-                        rules={[{ required: true, message: 'Required' }]}
+                        rules={[{required: true, message: 'Required'}]}
                     >
-                        <DatePicker showTime style={{ width: '100%' }} />
+                        <DatePicker showTime style={{width: '100%'}}/>
                     </Form.Item>
 
                     <Form.Item
                         name="source"
                         label="Recipient Source"
                     >
-                        <Input placeholder="e.g. Bank Account, Cash" />
+                        <Input placeholder="e.g. Bank Account, Cash"/>
                     </Form.Item>
 
                     <Form.Item
                         name="description"
                         label="Notes"
                     >
-                        <Input.TextArea rows={2} />
+                        <Input.TextArea rows={2}/>
                     </Form.Item>
 
-                    <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
+                    <Form.Item style={{marginBottom: 0, textAlign: 'right'}}>
                         <Space>
                             <Button onClick={() => setReimbModalVisible(false)}>Cancel</Button>
-                            <Button type="primary" htmlType="submit" loading={submitting} style={{ background: '#52c41a', borderColor: '#52c41a' }}>
+                            <Button type="primary" htmlType="submit" loading={submitting}
+                                    style={{background: '#52c41a', borderColor: '#52c41a'}}>
                                 Save Reimbursement
                             </Button>
                         </Space>
@@ -380,9 +386,9 @@ export default function TransactionsPage() {
                 footer={null}
                 width={400}
             >
-                <div style={{ marginBottom: 16 }}>
+                <div style={{marginBottom: 16}}>
                     <Text type="secondary">Description:</Text>
-                    <div style={{ fontWeight: 'bold' }}>{selectedTx?.description || 'No description'}</div>
+                    <div style={{fontWeight: 'bold'}}>{selectedTx?.description || 'No description'}</div>
                 </div>
 
                 <Form
@@ -393,7 +399,7 @@ export default function TransactionsPage() {
                     <Form.Item
                         name="category_id"
                         label="Assign Category"
-                        rules={[{ required: true, message: 'Please select a category' }]}
+                        rules={[{required: true, message: 'Please select a category'}]}
                     >
                         <Select
                             showSearch={{
@@ -401,7 +407,7 @@ export default function TransactionsPage() {
                                     (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
                             }}
                             placeholder="Select category"
-                            options={categories.map(c => ({ label: c.category, value: c.category_id }))}
+                            options={categories.map(c => ({label: c.category, value: c.category_id}))}
                         />
                     </Form.Item>
 
@@ -413,7 +419,7 @@ export default function TransactionsPage() {
                         <Checkbox>Assign to all transactions with same description and current category</Checkbox>
                     </Form.Item>
 
-                    <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
+                    <Form.Item style={{marginBottom: 0, textAlign: 'right'}}>
                         <Space>
                             <Button onClick={() => setCatModalVisible(false)}>Cancel</Button>
                             <Button type="primary" htmlType="submit" loading={submitting}>
@@ -440,9 +446,9 @@ export default function TransactionsPage() {
                     <Form.Item
                         name="description"
                         label="Description"
-                        rules={[{ required: true, message: 'Required' }]}
+                        rules={[{required: true, message: 'Required'}]}
                     >
-                        <Input />
+                        <Input/>
                     </Form.Item>
 
                     <Row gutter={8}>
@@ -450,14 +456,14 @@ export default function TransactionsPage() {
                             <Form.Item
                                 name="currency"
                                 label="Currency"
-                                rules={[{ required: true, message: 'Required' }]}
+                                rules={[{required: true, message: 'Required'}]}
                             >
                                 <Select
                                     options={[
-                                        { label: 'LKR', value: 'LKR' },
-                                        { label: 'USD', value: 'USD' },
-                                        { label: 'EUR', value: 'EUR' },
-                                        { label: 'GBP', value: 'GBP' },
+                                        {label: 'LKR', value: 'LKR'},
+                                        {label: 'USD', value: 'USD'},
+                                        {label: 'EUR', value: 'EUR'},
+                                        {label: 'GBP', value: 'GBP'},
                                     ]}
                                 />
                             </Form.Item>
@@ -466,9 +472,9 @@ export default function TransactionsPage() {
                             <Form.Item
                                 name="amount"
                                 label="Amount"
-                                rules={[{ required: true, message: 'Required' }]}
+                                rules={[{required: true, message: 'Required'}]}
                             >
-                                <InputNumber style={{ width: '100%' }} precision={2} />
+                                <InputNumber style={{width: '100%'}} precision={2}/>
                             </Form.Item>
                         </Col>
                     </Row>
@@ -476,20 +482,20 @@ export default function TransactionsPage() {
                     <Form.Item
                         name="datetime"
                         label="Date & Time"
-                        rules={[{ required: true, message: 'Required' }]}
+                        rules={[{required: true, message: 'Required'}]}
                     >
-                        <DatePicker showTime style={{ width: '100%' }} />
+                        <DatePicker showTime style={{width: '100%'}}/>
                     </Form.Item>
 
                     <Form.Item
                         name="source"
                         label="Source"
-                        rules={[{ required: true, message: 'Required' }]}
+                        rules={[{required: true, message: 'Required'}]}
                     >
-                        <Input />
+                        <Input/>
                     </Form.Item>
 
-                    <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
+                    <Form.Item style={{marginBottom: 0, textAlign: 'right'}}>
                         <Space>
                             <Button onClick={() => setEditModalVisible(false)}>Cancel</Button>
                             <Button type="primary" htmlType="submit" loading={submitting}>
