@@ -15,12 +15,13 @@ export async function POST(request: Request) {
             await connection.beginTransaction();
 
             const query = `
-        INSERT INTO transactions (amount, category_id, datetime, source, description) 
+        INSERT INTO transactions (amount, currency, category_id, datetime, source, description) 
         VALUES ?
       `;
 
             const values = transactions.map(tx => [
                 tx.amount,
+                tx.currency || 'LKR',
                 tx.category_id,
                 tx.datetime,
                 tx.source,

@@ -144,9 +144,8 @@ export default function ImportPage() {
         },
         {
             title: 'Amount',
-            dataIndex: 'amount',
             key: 'amount',
-            render: (val: number) => <Text strong color="red">LKR{val.toFixed(2)}</Text>
+            render: (_: any, record: ParsedSMS) => <Text strong color="red">{record.currency} {record.amount.toFixed(2)}</Text>
         },
         {
             title: 'Source',
@@ -227,7 +226,7 @@ export default function ImportPage() {
                     <Table
                         dataSource={data}
                         columns={columns}
-                        rowKey={(record) => `${record.datetime}-${record.description}`}
+                        rowKey={(record) => `${record.datetime}-${record.description}-${record.amount}`}
                         pagination={{ pageSize: 10 }}
                     />
                 </Card>

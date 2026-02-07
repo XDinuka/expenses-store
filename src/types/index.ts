@@ -6,6 +6,7 @@ export interface Category {
 export interface Transaction {
   transaction_id: number;
   amount: number;
+  currency: string;
   description: string | null;
   category_id: number;
   category?: string; // Joined category name

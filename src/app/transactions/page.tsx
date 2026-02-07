@@ -16,7 +16,9 @@ import {
     Card,
     Tooltip,
     Checkbox,
-    Typography
+    Typography,
+    Row,
+    Col
 } from 'antd';
 import { PlusOutlined, HistoryOutlined, EditOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -181,9 +183,9 @@ export default function TransactionsPage() {
             title: 'Amount',
             dataIndex: 'amount',
             key: 'amount',
-            render: (amount: number) => (
+            render: (amount: number, record: Transaction) => (
                 <span style={{ fontWeight: 'bold' }}>
-                    LKR{Number(amount).toFixed(2)}
+                    {record.currency} {Number(amount).toFixed(2)}
                 </span>
             ),
             sorter: (a: Transaction, b: Transaction) => a.amount - b.amount,
@@ -205,7 +207,7 @@ export default function TransactionsPage() {
                 const net = record.amount - (record.reimbursed_amount || 0);
                 return (
                     <span style={{ fontWeight: 'bold', color: net > 0 ? '#f5222d' : '#8c8c8c' }}>
-                        LKR{net.toFixed(2)}
+                        {record.currency} {net.toFixed(2)}
                     </span>
                 );
             },
@@ -276,6 +278,7 @@ export default function TransactionsPage() {
                             editForm.setFieldsValue({
                                 description: record.description,
                                 amount: record.amount,
+                                currency: record.currency,
                                 datetime: dayjs(record.datetime),
                                 source: record.source
                             });
@@ -330,7 +333,7 @@ export default function TransactionsPage() {
                         label="Reimbursement Amount"
                         rules={[{ required: true, message: 'Required' }]}
                     >
-                        <InputNumber style={{ width: '100%' }} precision={2} prefix="LKR" />
+                        <InputNumber style={{ width: '100%' }} precision={2} prefix={selectedTx?.currency || 'LKR'} />
                     </Form.Item>
 
                     <Form.Item
@@ -442,13 +445,33 @@ export default function TransactionsPage() {
                         <Input />
                     </Form.Item>
 
-                    <Form.Item
-                        name="amount"
-                        label="Amount"
-                        rules={[{ required: true, message: 'Required' }]}
-                    >
-                        <InputNumber style={{ width: '100%' }} precision={2} prefix="LKR" />
-                    </Form.Item>
+                    <Row gutter={8}>
+                        <Col span={6}>
+                            <Form.Item
+                                name="currency"
+                                label="Currency"
+                                rules={[{ required: true, message: 'Required' }]}
+                            >
+                                <Select
+                                    options={[
+                                        { label: 'LKR', value: 'LKR' },
+                                        { label: 'USD', value: 'USD' },
+                                        { label: 'EUR', value: 'EUR' },
+                                        { label: 'GBP', value: 'GBP' },
+                                    ]}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={18}>
+                            <Form.Item
+                                name="amount"
+                                label="Amount"
+                                rules={[{ required: true, message: 'Required' }]}
+                            >
+                                <InputNumber style={{ width: '100%' }} precision={2} />
+                            </Form.Item>
+                        </Col>
+                    </Row>
 
                     <Form.Item
                         name="datetime"

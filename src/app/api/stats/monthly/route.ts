@@ -3,10 +3,11 @@ import pool from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
 
 export async function GET() {
-    try {
-        const query = `
+  try {
+    const query = `
       SELECT 
         DATE_FORMAT(t.datetime, '%Y-%m') as month,
+        t.currency,
         c.category,
         SUM(t.amount) as total_spent,
         COALESCE(SUM(reimb.total_reimbursed), 0) as total_reimbursed,
@@ -18,14 +19,14 @@ export async function GET() {
         FROM reimbursements
         GROUP BY transaction_id
       ) reimb ON t.transaction_id = reimb.transaction_id
-      GROUP BY month, c.category
-      ORDER BY month DESC, c.category ASC
+      GROUP BY month, t.currency, c.category
+      ORDER BY month DESC, t.currency, c.category
     `;
 
-        const [rows] = await pool.query<RowDataPacket[]>(query);
-        return NextResponse.json(rows);
-    } catch (error) {
-        console.error('Error fetching monthly stats:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-    }
+    const [rows] = await pool.query<RowDataPacket[]>(query);
+    return NextResponse.json(rows);
+  } catch (error) {
+    console.error('Error fetching monthly stats:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
 }

@@ -21,15 +21,15 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     try {
-        const { amount, description, category_id, datetime, source } = await req.json();
+        const { amount, currency, description, category_id, datetime, source } = await req.json();
 
-        if (!amount || !category_id || !datetime || !source) {
+        if (!amount || !currency || !category_id || !datetime || !source) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
         const [result] = await pool.query<ResultSetHeader>(
-            'INSERT INTO transactions (amount, description, category_id, datetime, source) VALUES (?, ?, ?, ?, ?)',
-            [amount, description, category_id, datetime, source]
+            'INSERT INTO transactions (amount, currency, description, category_id, datetime, source) VALUES (?, ?, ?, ?, ?, ?)',
+            [amount, currency, description, category_id, datetime, source]
         );
 
         return NextResponse.json({

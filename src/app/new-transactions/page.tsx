@@ -45,6 +45,7 @@ export default function NewTransactionPage() {
 
     const onFinish = async (values: {
         amount: number;
+        currency: string;
         category_id: string;
         datetime: dayjs.Dayjs;
         source: string;
@@ -83,11 +84,27 @@ export default function NewTransactionPage() {
                 form={form}
                 layout="vertical"
                 onFinish={onFinish}
-                initialValues={{ datetime: dayjs() }}
+                initialValues={{ datetime: dayjs(), currency: 'LKR' }}
                 disabled={loading}
             >
                 <Row gutter={16}>
-                    <Col span={12}>
+                    <Col span={6}>
+                        <Form.Item
+                            name="currency"
+                            label="Currency"
+                            rules={[{ required: true, message: 'Required' }]}
+                        >
+                            <Select
+                                options={[
+                                    { label: 'LKR', value: 'LKR' },
+                                    { label: 'USD', value: 'USD' },
+                                    { label: 'EUR', value: 'EUR' },
+                                    { label: 'GBP', value: 'GBP' },
+                                ]}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={18}>
                         <Form.Item
                             name="amount"
                             label="Amount"
@@ -96,32 +113,30 @@ export default function NewTransactionPage() {
                             <InputNumber
                                 style={{ width: '100%' }}
                                 precision={2}
-                                prefix="LKR"
                                 placeholder="0.00"
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name="category_id"
-                            label="Category"
-                            rules={[{ required: true, message: 'Please select a category' }]}
-                        >
-                            <Select
-                                showSearch={{
-                                    filterOption: (input, option) =>
-                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
-                                }}
-                                placeholder="Select category"
-                                loading={loading}
-                                options={categories.map(cat => ({
-                                    label: cat.category,
-                                    value: cat.category_id
-                                }))}
-                            />
-                        </Form.Item>
-                    </Col>
                 </Row>
+
+                <Form.Item
+                    name="category_id"
+                    label="Category"
+                    rules={[{ required: true, message: 'Please select a category' }]}
+                >
+                    <Select
+                        showSearch={{
+                            filterOption: (input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
+                        }}
+                        placeholder="Select category"
+                        loading={loading}
+                        options={categories.map(cat => ({
+                            label: cat.category,
+                            value: cat.category_id
+                        }))}
+                    />
+                </Form.Item>
 
                 <Row gutter={16}>
                     <Col span={12}>
