@@ -1,13 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Col, DatePicker, Divider, Form, Input, InputNumber, message, Row, Select, Space, Typography } from 'antd';
+import { Button, Card, Col, DatePicker, Divider, Form, Input, InputNumber, message, Row, Select, Space } from 'antd';
 import { PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { Category } from '@/types';
-
-const { Title } = Typography;
 
 export default function NewTransactionPage() {
     const [categories, setCategories] = useState<Category[]>([]);
