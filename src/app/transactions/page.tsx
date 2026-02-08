@@ -201,7 +201,7 @@ export default function TransactionsPage() {
             key: 'reimbursed_amount',
             render: (amount: number) => (
                 <span style={{color: '#52c41a'}}>
-                    {amount > 0 ? `$${Number(amount).toFixed(2)}` : '-'}
+                    {amount > 0 ? `LKR${Number(amount).toFixed(2)}` : '-'}
                 </span>
             ),
         },
