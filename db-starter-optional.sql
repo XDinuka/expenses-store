@@ -1,5 +1,5 @@
 INSERT INTO `categories` (`category_id`, `category`)
-VALUES (2, 'Alcohol'),
+VALUES
        (3, 'Books'),
        (4, 'Car'),
        (5, 'Clothes'),
@@ -12,15 +12,11 @@ VALUES (2, 'Alcohol'),
        (12, 'Gifts to Others'),
        (25, 'Groceries'),
        (13, 'Home'),
-       (14, 'Jewelry'),
-       (15, 'Loan Repayment'),
        (16, 'Medicine'),
-       (17, 'Migration'),
        (18, 'Recreational'),
        (19, 'Religion'),
        (20, 'Subscriptions'),
        (21, 'Transportation'),
-       (22, 'Trip'),
        (23, 'Utilities'),
        (24, 'Work');
 
