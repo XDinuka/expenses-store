@@ -6,6 +6,8 @@
 
 ### Steps
 - provide db credentials to the .env file
+- use contents of `db-starter-required.sql` to create your db
+- optionally use contents of `db-starter-optional.sql` to add some transaction categories
 - run
 
 ### Notes
